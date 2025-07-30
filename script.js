@@ -1,27 +1,37 @@
-const getSumBtn = document.createElement("button");
-getSumBtn.append("Get Total Price");
-document.body.appendChild(getSumBtn);
+const tableBody = document.getElementById("promiseTableBody");
+const totalTimeCell = document.getElementById("totalTime");
 
-const getSum = () => {
-//Add your code here
-   const priceCells = document.querySelectorAll(".price");
-
-  let total = 0;
-  priceCells.forEach(cell => {
-  total += parseFloat(cell.textContent);
+function createPromise(delay, label) {
+  const start = performance.now();
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const end = performance.now();
+      const seconds = ((end - start) / 1000).toFixed(3);
+      resolve({ label, time: seconds });
+    }, delay);
   });
-  const table = document.querySelector("table");
-  const newRow = document.createElement("tr");
-  const totalCell = document.createElement("td");
-  
-  totalCell.colSpan = 2;
-  totalCell.textContent = `Total Price: ₹${total}`;
-  totalCell.style.fontWeight = "bold";
+}
 
-  newRow.appendChild(totalCell);
-  table.appendChild(newRow);
-  getSumBtn.disabled = true;
-};
+async function runPromises() {
+  const startTotal = performance.now();
 
-getSumBtn.addEventListener("click", getSum);
+  const promises = [
+    createPromise(2000, "Promise 1"),
+    createPromise(1000, "Promise 2"),
+    createPromise(3000, "Promise 3"),
+  ];
 
+  const results = await Promise.all(promises);
+
+  results.forEach((result) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${result.label}</td><td>${result.time}</td>`;
+    tableBody.appendChild(row);
+  });
+
+  const endTotal = performance.now();
+  const totalTime = ((endTotal - startTotal) / 1000).toFixed(3);
+  totalTimeCell.textContent = totalTime;
+}
+
+runPromises();
