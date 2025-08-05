@@ -1,37 +1,26 @@
-const tableBody = document.getElementById("promiseTableBody");
-const totalTimeCell = document.getElementById("totalTime");
+// Select all price cells
+const priceCells = document.querySelectorAll('.prices');
 
-function createPromise(delay, label) {
-  const start = performance.now();
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const end = performance.now();
-      const seconds = ((end - start) / 1000).toFixed(3);
-      resolve({ label, time: seconds });
-    }, delay);
-  });
-}
+let total = 0;
 
-async function runPromises() {
-  const startTotal = performance.now();
+// Sum all prices
+priceCells.forEach(cell => {
+  const value = parseFloat(cell.textContent);
+  if (!isNaN(value)) {
+    total += value;
+  }
+});
 
-  const promises = [
-    createPromise(2000, "Promise 1"),
-    createPromise(1000, "Promise 2"),
-    createPromise(3000, "Promise 3"),
-  ];
+// Create a new row for total
+const totalRow = document.createElement('tr');
+const totalCell = document.createElement('td');
+totalCell.setAttribute('colspan', '2');
+totalCell.style.fontWeight = 'bold';
+totalCell.style.textAlign = 'right';
+totalCell.textContent = `Total: Rs ${total}`;
 
-  const results = await Promise.all(promises);
+totalRow.appendChild(totalCell);
 
-  results.forEach((result) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${result.label}</td><td>${result.time}</td>`;
-    tableBody.appendChild(row);
-  });
-
-  const endTotal = performance.now();
-  const totalTime = ((endTotal - startTotal) / 1000).toFixed(3);
-  totalTimeCell.textContent = totalTime;
-}
-
-runPromises();
+// Append to the table
+const table = document.querySelector('table');
+table.appendChild(totalRow);
