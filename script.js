@@ -1,26 +1,31 @@
-// Select all price cells
-const priceCells = document.querySelectorAll('.prices');
+const getSumBtn = document.createElement("button");
+getSumBtn.append("Get Total Price");
+document.body.appendChild(getSumBtn);
 
-let total = 0;
+const getSum = () => {
+  let prices = document.querySelectorAll(".price");
+  let sum = 0;
 
-// Sum all prices
-priceCells.forEach(cell => {
-  const value = parseFloat(cell.textContent);
-  if (!isNaN(value)) {
-    total += value;
+  prices.forEach((price) => {
+    sum += Number(price.textContent);
+  });
+
+  let ansCell = document.getElementById("ans");
+
+  if (ansCell) {
+    // If total already exists, just update
+    ansCell.textContent = sum;
+  } else {
+    // Create new total row
+    let tr = document.createElement("tr");
+    let td = document.createElement("td");
+    td.id = "ans";
+    td.colSpan = document.querySelectorAll("thead th").length || 1;
+    td.textContent = sum;
+
+    tr.appendChild(td);
+    document.getElementsByTagName("table")[0].appendChild(tr);
   }
-});
+};
 
-// Create a new row for total
-const totalRow = document.createElement('tr');
-const totalCell = document.createElement('td');
-totalCell.setAttribute('colspan', '2');
-totalCell.style.fontWeight = 'bold';
-totalCell.style.textAlign = 'right';
-totalCell.textContent = `Total: Rs ${total}`;
-
-totalRow.appendChild(totalCell);
-
-// Append to the table
-const table = document.querySelector('table');
-table.appendChild(totalRow);
+getSumBtn.addEventListener("click", getSum);
